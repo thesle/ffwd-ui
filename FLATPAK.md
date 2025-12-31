@@ -49,7 +49,6 @@ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flat
 ```bash
 flatpak install flathub org.gnome.Platform//47
 flatpak install flathub org.gnome.Sdk//47
-flatpak install flathub org.freedesktop.Sdk.Extension.golang
 ```
 
 ### 4. Build the Flatpak
@@ -104,10 +103,12 @@ flatpak install ffwd-ui.flatpak
 ### Manifest (`io.github.thesle.FFwdUI.yml`)
 
 The main Flatpak manifest that defines:
-- **Runtime**: org.gnome.Platform 47 (includes WebKit2GTK 4.1)
-- **SDK**: org.gnome.Sdk 47 with Golang extension
+- **Runtime**: org.gnome.Platform 47 (includes WebKit2GTK 4.1 natively)
+- **SDK**: org.gnome.Sdk 47
 - **Modules**:
-  - FFmpeg 6.1.1 with common codecs (x264, x265, VP9, AV1, MP3, Vorbis, Opus)
+  - Go 1.23.4 (installed directly from official binaries)
+  - x264 and x265 codecs (for H.264/H.265 support)
+  - FFmpeg 6.1.1 with H.264 and H.265 encoding
   - FFwd UI application
 
 ### Desktop Entry (`io.github.thesle.FFwdUI.desktop`)
@@ -152,9 +153,9 @@ These are defined in the `finish-args` section of the manifest.
 ### Dependencies Included
 
 The Flatpak bundles everything needed:
-- **FFmpeg 6.1.1** with codecs for H.264, H.265, VP8/VP9, AV1, MP3, AAC, Vorbis, Opus, FLAC
+- **FFmpeg 6.1.1** with H.264 (x264) and H.265 (x265) encoding support
 - **WebKit2GTK 4.1** (included in GNOME Platform 47)
-- **Go runtime** for building the application
+- **Go 1.23.4** for building the application
 
 Users don't need to install FFmpeg separately!
 

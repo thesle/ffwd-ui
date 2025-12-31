@@ -38,6 +38,7 @@ dev:
 	fi
 
 build:
+	@sudo rm -rf build-dir repo .flatpak-builder
 	@DISTRO=$$(lsb_release -is 2>/dev/null || echo "Unknown"); \
 	VERSION=$$(lsb_release -rs 2>/dev/null || echo "0"); \
 	# Use webkit2_41 for Ubuntu >= 24 and Linux Mint >= 22 \
@@ -55,24 +56,23 @@ flatpak-check:
 	@echo "Checking Flatpak prerequisites..."
 	@command -v flatpak-builder >/dev/null 2>&1 || { echo "Error: flatpak-builder is not installed. Install with: sudo apt install flatpak-builder"; exit 1; }
 	@echo "✓ flatpak-builder found"
-	@flatpak list | grep -q "org.gnome.Platform.*47" || { echo "Installing org.gnome.Platform//47..."; flatpak install -y flathub org.gnome.Platform//47; }
-	@flatpak list | grep -q "org.gnome.Sdk.*47" || { echo "Installing org.gnome.Sdk//47..."; flatpak install -y flathub org.gnome.Sdk//47; }
-	@flatpak list | grep -q "org.freedesktop.Sdk.Extension.golang" || { echo "Installing org.freedesktop.Sdk.Extension.golang..."; flatpak install -y flathub org.freedesktop.Sdk.Extension.golang; }
+	@flatpak list | grep -q "org.gnome.Platform.*49" || { echo "Installing org.gnome.Platform//49..."; flatpak install -y flathub org.gnome.Platform//49; }
+	@flatpak list | grep -q "org.gnome.Sdk.*49" || { echo "Installing org.gnome.Sdk//49..."; flatpak install -y flathub org.gnome.Sdk//49; }
 	@echo "✓ All prerequisites installed"
 
-flatpak: flatpak-check
+flatpak: build flatpak-check
 	@echo "Building Flatpak package..."
 	flatpak-builder --force-clean build-dir io.github.thesle.FFwdUI.yml
 	@echo ""
 	@echo "Build complete! To install locally, run: make flatpak-install"
 
-flatpak-install: flatpak-check
+flatpak-install: build flatpak-check
 	@echo "Building and installing Flatpak locally..."
 	flatpak-builder --user --install --force-clean build-dir io.github.thesle.FFwdUI.yml
 	@echo ""
 	@echo "Installation complete! Run with: flatpak run io.github.thesle.FFwdUI"
 
-flatpak-bundle: flatpak-check
+flatpak-bundle: build flatpak-check
 	@echo "Creating distributable Flatpak bundle..."
 	flatpak-builder --repo=repo --force-clean build-dir io.github.thesle.FFwdUI.yml
 	flatpak build-bundle repo ffwd-ui.flatpak io.github.thesle.FFwdUI

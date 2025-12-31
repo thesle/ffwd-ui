@@ -72,7 +72,7 @@ The built application will be in the `build/bin` directory.
 
 ### Flatpak Distribution
 
-FFwd UI can be distributed as a Flatpak for easy installation across different Linux distributions. The Flatpak uses the GNOME 47 runtime and includes FFmpeg, making it completely self-contained.
+FFwd UI can be distributed as a Flatpak for easy installation across different Linux distributions. The Flatpak uses the GNOME 47 runtime (which includes WebKit2GTK 4.1) and bundles FFmpeg with H.264/H.265 support, making it completely self-contained.
 
 #### Prerequisites
 
@@ -99,7 +99,6 @@ Install required runtimes and SDK:
 
 ```bash
 flatpak install flathub org.gnome.Platform//47 org.gnome.Sdk//47
-flatpak install flathub org.freedesktop.Sdk.Extension.golang
 ```
 
 #### Building the Flatpak

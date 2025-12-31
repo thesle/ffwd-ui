@@ -733,7 +733,7 @@
             <hr>
           {/if}
 
-          {#if diskSpace.length > 0}
+          {#if diskSpace.length > 0 && diskSpace.length <= 10}
             <div class="field">
               <label class="label">Available Disk Space</label>
               <div class="content">
@@ -747,11 +747,6 @@
                   </div>
                 {/each}
               </div>
-            </div>
-          {:else}
-            <div class="field">
-              <label class="label">Available Disk Space</label>
-              <p class="is-size-7 has-text-grey">Loading disk information...</p>
             </div>
           {/if}
         </div>
