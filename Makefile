@@ -2,7 +2,7 @@ SHELL := /bin/bash
 
 .DEFAULT_GOAL := help
 
-.PHONY: dev dev-pr build help
+.PHONY: dev dev-pr build help flatpak flatpak-install flatpak-bundle flatpak-check
 
 # Use like:
 #   make dev
@@ -13,9 +13,13 @@ help:
 	@echo "  make [target]"
 	@echo ""
 	@echo "Targets:"
-	@echo "  dev    - Run wails dev (auto-detects distro/version for webkit2_41 tag)"
-	@echo "  build  - Build the app (injects BuildDate; auto-detects webkit2_41 tag)"
-	@echo "  help   - Show this help message"
+	@echo "  dev              - Run wails dev (auto-detects distro/version for webkit2_41 tag)"
+	@echo "  build            - Build the app (injects BuildDate; auto-detects webkit2_41 tag)"
+	@echo "  flatpak          - Build Flatpak package"
+	@echo "  flatpak-install  - Build and install Flatpak locally"
+	@echo "  flatpak-bundle   - Create distributable Flatpak bundle"
+	@echo "  flatpak-check    - Check Flatpak prerequisites"
+	@echo "  help             - Show this help message"
 	@echo ""
 	@echo "Default target: help"
 
@@ -46,3 +50,32 @@ build:
 	  echo "Detected Linux Mint < 22, Ubuntu < 24, or another distro. Using normal build command..."; \
 	  wails build --ldflags="-X main.BuildDate=$$(date -u '+%Y-%m-%d_%H:%M:%S')"; \
 	fi
+
+flatpak-check:
+	@echo "Checking Flatpak prerequisites..."
+	@command -v flatpak-builder >/dev/null 2>&1 || { echo "Error: flatpak-builder is not installed. Install with: sudo apt install flatpak-builder"; exit 1; }
+	@echo "✓ flatpak-builder found"
+	@flatpak list | grep -q "org.gnome.Platform.*47" || { echo "Installing org.gnome.Platform//47..."; flatpak install -y flathub org.gnome.Platform//47; }
+	@flatpak list | grep -q "org.gnome.Sdk.*47" || { echo "Installing org.gnome.Sdk//47..."; flatpak install -y flathub org.gnome.Sdk//47; }
+	@flatpak list | grep -q "org.freedesktop.Sdk.Extension.golang" || { echo "Installing org.freedesktop.Sdk.Extension.golang..."; flatpak install -y flathub org.freedesktop.Sdk.Extension.golang; }
+	@echo "✓ All prerequisites installed"
+
+flatpak: flatpak-check
+	@echo "Building Flatpak package..."
+	flatpak-builder --force-clean build-dir io.github.thesle.FFwdUI.yml
+	@echo ""
+	@echo "Build complete! To install locally, run: make flatpak-install"
+
+flatpak-install: flatpak-check
+	@echo "Building and installing Flatpak locally..."
+	flatpak-builder --user --install --force-clean build-dir io.github.thesle.FFwdUI.yml
+	@echo ""
+	@echo "Installation complete! Run with: flatpak run io.github.thesle.FFwdUI"
+
+flatpak-bundle: flatpak-check
+	@echo "Creating distributable Flatpak bundle..."
+	flatpak-builder --repo=repo --force-clean build-dir io.github.thesle.FFwdUI.yml
+	flatpak build-bundle repo ffwd-ui.flatpak io.github.thesle.FFwdUI
+	@echo ""
+	@echo "Bundle created: ffwd-ui.flatpak"
+	@echo "Users can install with: flatpak install ffwd-ui.flatpak"

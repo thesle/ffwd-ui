@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=FFwd UI
+Comment=A minimalistic FFmpeg GUI for common video operations
+Exec=ffwd-ui
+Icon=io.github.thesle.FFwdUI
+Type=Application
+Categories=AudioVideo;Video;AudioVideoEditing;
+Keywords=ffmpeg;video;audio;convert;trim;extract;
+StartupNotify=true

@@ -54,6 +54,8 @@ The app will launch with a development server. Changes to frontend code will hot
 
 ## Building
 
+### Native Binary
+
 Build a production binary:
 
 ```bash
@@ -67,6 +69,89 @@ wails build -clean -upx
 ```
 
 The built application will be in the `build/bin` directory.
+
+### Flatpak Distribution
+
+FFwd UI can be distributed as a Flatpak for easy installation across different Linux distributions. The Flatpak uses the GNOME 47 runtime and includes FFmpeg, making it completely self-contained.
+
+#### Prerequisites
+
+Install Flatpak and flatpak-builder:
+
+```bash
+# Ubuntu/Debian
+sudo apt install flatpak flatpak-builder
+
+# Fedora
+sudo dnf install flatpak flatpak-builder
+
+# Arch
+sudo pacman -S flatpak flatpak-builder
+```
+
+Add Flathub repository:
+
+```bash
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+```
+
+Install required runtimes and SDK:
+
+```bash
+flatpak install flathub org.gnome.Platform//47 org.gnome.Sdk//47
+flatpak install flathub org.freedesktop.Sdk.Extension.golang
+```
+
+#### Building the Flatpak
+
+The easiest way to build is using the Makefile:
+
+```bash
+# Just build the Flatpak
+make flatpak
+
+# Build and install locally for testing
+make flatpak-install
+
+# Create a distributable bundle
+make flatpak-bundle
+```
+
+Run the installed Flatpak:
+
+```bash
+flatpak run io.github.thesle.FFwdUI
+```
+
+#### Manual Build (without Make)
+
+You can also build manually:
+
+```bash
+# Build only
+flatpak-builder --force-clean build-dir io.github.thesle.FFwdUI.yml
+
+# Install locally
+flatpak-builder --user --install --force-clean build-dir io.github.thesle.FFwdUI.yml
+
+# Create bundle
+flatpak-builder --repo=repo --force-clean build-dir io.github.thesle.FFwdUI.yml
+flatpak build-bundle repo ffwd-ui.flatpak io.github.thesle.FFwdUI
+```
+
+Users can install the bundle with:
+
+```bash
+flatpak install ffwd-ui.flatpak
+```
+
+#### Publishing to Flathub
+
+To publish on Flathub:
+
+1. Fork the [Flathub repository](https://github.com/flathub/flathub)
+2. Add your `io.github.thesle.FFwdUI.yml` manifest
+3. Submit a pull request following [Flathub submission guidelines](https://docs.flathub.org/docs/for-app-authors/submission)
 
 ## Usage
 

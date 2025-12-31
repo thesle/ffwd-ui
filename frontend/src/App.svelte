@@ -13,6 +13,8 @@
   let trimLengthH = 0, trimLengthM = 1, trimLengthS = 0;
   let trimRangeStartH = 0, trimRangeStartM = 0, trimRangeStartS = 0;
   let trimRangeEndH = 0, trimRangeEndM = 1, trimRangeEndS = 0;
+  let paddingStartH = 0, paddingStartM = 0, paddingStartS = 0;
+  let paddingEndH = 0, paddingEndM = 0, paddingEndS = 0;
   
   // Audio
   let audioFormat = 'mp3';
@@ -265,6 +267,10 @@
           }
           params.two_pass = useTwoPass;
           break;
+        case 'add_padding':
+          params.start_seconds = timeToSeconds(paddingStartH, paddingStartM, paddingStartS);
+          params.end_seconds = timeToSeconds(paddingEndH, paddingEndM, paddingEndS);
+          break;
       }
 
       commandPreview = await App.PreviewCommand(operation, inputFile, outputFile, params);
@@ -316,6 +322,11 @@
           break;
         case 'adjust_bitrate':
           await App.AdjustBitrate(inputFile, outputFile, videoBitrate, audioBitrate, useHardwareAccel ? hardwareEncoder : 'none', useTwoPass);
+          break;
+        case 'add_padding':
+          await App.AddPadding(inputFile, outputFile,
+            timeToSeconds(paddingStartH, paddingStartM, paddingStartS),
+            timeToSeconds(paddingEndH, paddingEndM, paddingEndS));
           break;
       }
     } catch (err) {
@@ -378,6 +389,8 @@
     trimLengthH; trimLengthM; trimLengthS;
     trimRangeStartH; trimRangeStartM; trimRangeStartS;
     trimRangeEndH; trimRangeEndM; trimRangeEndS;
+    paddingStartH; paddingStartM; paddingStartS;
+    paddingEndH; paddingEndM; paddingEndS;
     audioFormat; targetFormat; resolutionPreset; customWidth; customHeight;
     volumePercent; cropWidth; cropHeight; cropX; cropY;
     videoBitrate; audioBitrate; useTwoPass; useHardwareAccel; hardwareEncoder;
@@ -449,6 +462,7 @@
           <label class="radio"><input type="radio" bind:group={operation} value="adjust_volume"> Adjust Volume</label>
           <label class="radio"><input type="radio" bind:group={operation} value="crop_video"> Crop Video</label>
           <label class="radio"><input type="radio" bind:group={operation} value="adjust_bitrate"> Adjust Bitrate</label>
+          <label class="radio"><input type="radio" bind:group={operation} value="add_padding"> Add Padding</label>
         </div>
       </div>
 
@@ -594,6 +608,29 @@
             <div class="control is-expanded">
               <input class="input" type="number" bind:value={cropY} min="0" placeholder="Y offset">
             </div>
+          </div>
+        </div>
+      {/if}
+
+      {#if operation === 'add_padding'}
+        <div class="field">
+          <label class="label">Padding at Start</label>
+          <div class="field is-grouped">
+            <div class="control"><input class="input" type="number" bind:value={paddingStartH} min="0" placeholder="H" style="width: 70px;"></div>
+            <div class="control"><span class="is-size-4">:</span></div>
+            <div class="control"><input class="input" type="number" bind:value={paddingStartM} min="0" max="59" placeholder="M" style="width: 70px;"></div>
+            <div class="control"><span class="is-size-4">:</span></div>
+            <div class="control"><input class="input" type="number" bind:value={paddingStartS} min="0" max="59.99" step="0.01" placeholder="S.ss" style="width: 80px;"></div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Padding at End</label>
+          <div class="field is-grouped">
+            <div class="control"><input class="input" type="number" bind:value={paddingEndH} min="0" placeholder="H" style="width: 70px;"></div>
+            <div class="control"><span class="is-size-4">:</span></div>
+            <div class="control"><input class="input" type="number" bind:value={paddingEndM} min="0" max="59" placeholder="M" style="width: 70px;"></div>
+            <div class="control"><span class="is-size-4">:</span></div>
+            <div class="control"><input class="input" type="number" bind:value={paddingEndS} min="0" max="59.99" step="0.01" placeholder="S.ss" style="width: 80px;"></div>
           </div>
         </div>
       {/if}

@@ -9,5 +9,11 @@
   "author": {
     "name": "Conrad Smith",
     "email": ""
+  },
+  "info": {
+    "productName": "FFwd UI",
+    "productVersion": "1.0.0",
+    "copyright": "Copyright © 2025 Conrad Smith",
+    "comments": "A minimalistic FFmpeg GUI for common video operations"
   }
 }

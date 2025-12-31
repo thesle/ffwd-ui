@@ -154,6 +154,38 @@ func DetectHardwareEncoder() string {
 	return "none"
 }
 
+func BuildAddPaddingCommand(input, output string, startSeconds, endSeconds float64) []string {
+	args := []string{"-i", input}
+
+	if startSeconds > 0 && endSeconds > 0 {
+		args = append(args,
+			"-filter_complex",
+			fmt.Sprintf("[0:v]tpad=start_duration=%.2f:start_mode=clone[v];[0:a]adelay=%.0f|%.0f[a]",
+				startSeconds, startSeconds*1000, startSeconds*1000),
+			"-map", "[v]",
+			"-map", "[a]",
+		)
+	} else if startSeconds > 0 {
+		args = append(args,
+			"-filter_complex",
+			fmt.Sprintf("[0:v]tpad=start_duration=%.2f:start_mode=clone[v];[0:a]adelay=%.0f|%.0f[a]",
+				startSeconds, startSeconds*1000, startSeconds*1000),
+			"-map", "[v]",
+			"-map", "[a]",
+		)
+	} else if endSeconds > 0 {
+		args = append(args,
+			"-filter_complex",
+			fmt.Sprintf("[0:v]tpad=stop_duration=%.2f:stop_mode=clone[v]", endSeconds),
+			"-map", "[v]",
+			"-map", "0:a",
+		)
+	}
+
+	args = append(args, output)
+	return args
+}
+
 func BuildCommandString(args []string) string {
 	quotedArgs := make([]string, len(args))
 	for i, arg := range args {

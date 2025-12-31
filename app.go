@@ -221,6 +221,21 @@ func (a *App) AdjustBitrate(input, output, videoBitrate, audioBitrate, hwAccel s
 	return a.executor.Execute(args, fileInfo.Duration)
 }
 
+func (a *App) AddPadding(input, output string, startSeconds, endSeconds float64) error {
+	if a.executor.IsRunning() {
+		return fmt.Errorf("operation already running")
+	}
+
+	args := ffmpeg.BuildAddPaddingCommand(input, output, startSeconds, endSeconds)
+
+	fileInfo, err := ffmpeg.ProbeFile(input)
+	if err != nil {
+		return err
+	}
+
+	return a.executor.Execute(args, fileInfo.Duration)
+}
+
 func (a *App) DetectHardwareEncoder() string {
 	return ffmpeg.DetectHardwareEncoder()
 }
@@ -280,6 +295,10 @@ func (a *App) PreviewCommand(operation string, input, output string, params map[
 			twoPass = tp
 		}
 		args = ffmpeg.BuildAdjustBitrateCommand(input, output, videoBitrate, audioBitrate, hwAccel, twoPass)
+	case "add_padding":
+		startSeconds := params["start_seconds"].(float64)
+		endSeconds := params["end_seconds"].(float64)
+		args = ffmpeg.BuildAddPaddingCommand(input, output, startSeconds, endSeconds)
 	default:
 		return "", fmt.Errorf("unknown operation: %s", operation)
 	}
@@ -310,6 +329,8 @@ func (a *App) GetDefaultOutputName(inputPath, operation string) string {
 		return base + "_cropped" + ext
 	case "adjust_bitrate":
 		return base + "_bitrate" + ext
+	case "add_padding":
+		return base + "_padded" + ext
 	default:
 		return base + "_output" + ext
 	}

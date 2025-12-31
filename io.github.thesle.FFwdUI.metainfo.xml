@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.thesle.FFwdUI</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <name>FFwd UI</name>
+  <summary>A minimalistic FFmpeg GUI for common video operations</summary>
+  
+  <description>
+    <p>
+      FFwd UI is a user-friendly desktop application for common FFmpeg operations built with Go, Wails, and Svelte.
+      It provides a simple interface for video and audio manipulation tasks without requiring command-line knowledge.
+    </p>
+    <p>Features include:</p>
+    <ul>
+      <li>Trim video from start or to specific length</li>
+      <li>Trim video to a specific time range</li>
+      <li>Extract audio tracks in various formats (MP3, AAC, WAV, FLAC)</li>
+      <li>Convert between video formats</li>
+      <li>Change video resolution with hardware acceleration support</li>
+      <li>Adjust audio volume</li>
+      <li>Crop video to specific dimensions</li>
+      <li>Adjust video and audio bitrates</li>
+      <li>Add padding (silence/blank video) to beginning and end</li>
+      <li>Real-time progress tracking</li>
+      <li>Command preview before execution</li>
+      <li>Disk space monitoring</li>
+    </ul>
+  </description>
+  
+  <launchable type="desktop-id">io.github.thesle.FFwdUI.desktop</launchable>
+  
+  <screenshots>
+    <screenshot type="default">
+      <caption>Main application window</caption>
+    </screenshot>
+  </screenshots>
+  
+  <url type="homepage">https://github.com/thesle/ffwd-ui</url>
+  <url type="bugtracker">https://github.com/thesle/ffwd-ui/issues</url>
+  
+  <developer_name>Conrad Smith</developer_name>
+  
+  <releases>
+    <release version="1.0.0" date="2025-12-31">
+      <description>
+        <p>Initial release with core features:</p>
+        <ul>
+          <li>Video trimming operations</li>
+          <li>Audio extraction</li>
+          <li>Format conversion</li>
+          <li>Resolution changes</li>
+          <li>Volume adjustment</li>
+          <li>Video cropping</li>
+          <li>Bitrate adjustment</li>
+          <li>Padding support</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
+  
+  <content_rating type="oars-1.1" />
+</component>

@@ -1,0 +1,60 @@
+app-id: io.github.thesle.FFwdUI
+runtime: org.gnome.Platform
+runtime-version: '47'
+sdk: org.gnome.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.golang
+command: ffwd-ui
+finish-args:
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+  - --filesystem=home
+  - --filesystem=xdg-documents
+  - --filesystem=xdg-videos
+  - --filesystem=xdg-music
+  - --filesystem=xdg-download
+
+modules:
+  - name: ffmpeg
+    config-opts:
+      - --enable-gpl
+      - --enable-libx264
+      - --enable-libx265
+      - --enable-libvpx
+      - --enable-libmp3lame
+      - --enable-libvorbis
+      - --enable-libopus
+      - --enable-libaom
+      - --disable-static
+      - --enable-shared
+    sources:
+      - type: archive
+        url: https://ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz
+        sha256: 8684f4b00f94b85461884c3719382f1261f0d9eb3d59640a1f4ac0873616f968
+    cleanup:
+      - /share/ffmpeg/examples
+
+  - name: ffwd-ui
+    buildsystem: simple
+    build-options:
+      append-path: /usr/lib/sdk/golang/bin
+      env:
+        GOBIN: /app/bin
+        GOROOT: /usr/lib/sdk/golang
+    build-commands:
+      - cd frontend && npm install && npm run build && cd ..
+      - go build -tags desktop,production -ldflags="-w -s" -o ffwd-ui
+      - install -Dm755 ffwd-ui /app/bin/ffwd-ui
+      - install -Dm644 io.github.thesle.FFwdUI.desktop /app/share/applications/io.github.thesle.FFwdUI.desktop
+      - install -Dm644 io.github.thesle.FFwdUI.metainfo.xml /app/share/metainfo/io.github.thesle.FFwdUI.metainfo.xml
+      - install -Dm644 build/appicon.png /app/share/icons/hicolor/512x512/apps/io.github.thesle.FFwdUI.png
+    sources:
+      - type: git
+        url: https://github.com/thesle/ffwd-ui.git
+        tag: v1.0.0
+      - type: file
+        path: io.github.thesle.FFwdUI.desktop
+      - type: file
+        path: io.github.thesle.FFwdUI.metainfo.xml

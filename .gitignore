@@ -1,4 +1,14 @@
+# Wails build directory
 build/bin
-node_modules
-frontend/dist
 ffwd-ui
+
+# Frontend
+frontend/dist/
+frontend/node_modules/
+node_modules
+
+# Flatpak build artifacts
+build-dir/
+repo/
+.flatpak-builder/
+*.flatpak
